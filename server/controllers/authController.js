@@ -27,6 +27,7 @@ try{
 
 }
 catch(error){
+  console.log(error);
    return res.json({message: "Error occured signing Up " })
 }
 };
