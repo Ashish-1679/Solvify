@@ -3,7 +3,7 @@ require('dotenv/config');
 const { connectDB } = require('./config/db.js');
 const cors = require('cors');
 const app = express();
-const problemRoutes = require("./routes/problemRoutes.js");
+
 const authMiddleware = require("./middlewares/authMiddleware");
 app.use(express.json());
 app.use(cors());
@@ -20,8 +20,10 @@ app.use('/',authRoutes);
     console.log(`Server is running on port ${PORT}`);
   });
 };
+const problemRoutes = require("./routes/problemRoutes.js");
+const requestRoutes = require("./routes/requestRoutes.js");
 app.use('/problems',authMiddleware,problemRoutes);
-
+app.use("/requests",authMiddleware, requestRoutes);
 startServer().catch((error) => {
   console.error('Unable to start server:', error);
 });
