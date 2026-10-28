@@ -10,12 +10,12 @@ const {
     rejectRequest
 } = require("../controllers/request.js");
 
-const authMiddleware = require("../middlewares/authMiddleware.js");
 
-router.post("/send/:id", authMiddleware, requestToSolve);
-router.get("/sent", authMiddleware, getSentRequests);
-router.get("/received", authMiddleware, getReceivedRequests);
-router.post("/accept/:id", authMiddleware, acceptRequest);
-router.post("/reject/:id", authMiddleware, rejectRequest);
+
+router.post("/send/:id", requestToSolve);
+router.get("/sent", getSentRequests);
+router.get("/received", getReceivedRequests);
+router.post("/accept/:id", acceptRequest);
+router.post("/reject/:id", rejectRequest);
 
 module.exports = router;
