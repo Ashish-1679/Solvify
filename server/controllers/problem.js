@@ -297,6 +297,21 @@ const resolveProblem = async (req, res) => {
 
         await session.commitTransaction();
 
+try {
+    const io = req.app.get("io");
+    const room = problem._id.toString();
+
+    const sockets = await io.in(room).fetchSockets();
+
+    for (const socket of sockets) {
+        await socket.leave(room);
+    }
+} catch (socketError) {
+    console.error(
+        "Unable to clean up resolved problem room:",
+        socketError.message
+    );
+}
         return res.status(200).json({
             success: true,
             message: "Problem resolved and bounty transferred successfully"
@@ -342,6 +357,8 @@ const reopenProblem = async (req, res) => {
                 message: "Only problems in progress can be reopened"
             });
         }
+        const previousHelperId = problem.helperId?.toString();
+
 
       if (problem.helperId) {
     const alreadyRejected = problem.rejectedHelpers.some(
@@ -357,7 +374,16 @@ const reopenProblem = async (req, res) => {
         problem.helperId = null;
 
         await problem.save();
-
+if(previousHelperId){
+    const io = req.app.get("io");
+    const room = req.params.id;
+    const sockets = await io.in(room).fetchSockets();
+    for(const socket of sockets){
+        if (socket.userId?.toString() === previousHelperId) {
+                    await socket.leave(room);
+                }
+    }
+}
         return res.status(200).json({
             success: true,
             message: "Problem reopened successfully"

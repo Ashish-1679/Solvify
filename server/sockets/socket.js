@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const Problem = require("../models/problem.js");
+const Message = require("../models/message.js");
 const initializeSocket = (server) => {
     const io = new Server(server, {
         cors: {
@@ -8,7 +9,10 @@ const initializeSocket = (server) => {
         }
     });
     io.use((socket,next)=>{
-        const token = socket.handshake.auth.token;
+        //const token = socket.handshake.auth.token;
+        const token =
+    socket.handshake.auth?.token ||
+    socket.handshake.headers.authorization?.split(" ")[1];
         if(!token) return next(new Error("Authentication required"));
         try{
          const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -24,6 +28,10 @@ return next(new Error("Authentication Required"));
         console.log("User connected:", socket.id);
 socket.on("joinRoom", async (problemId) => {
  try {
+    if (typeof problemId !== "string" ||  !/^[0-9a-fA-F]{24}$/.test(problemId)) {
+            socket.emit("errorMessage", "Invalid problem ID");
+            return;
+        }
     const problem = await Problem.findById(problemId);
 
     if (!problem) {
@@ -34,7 +42,7 @@ socket.on("joinRoom", async (problemId) => {
         socket.emit("errorMessage","You are not allowed to access this chat");
         return;
     }
-    if ( problem.status !== "IN_PROGRESS" && problem.status !== "RESOLVED") {
+    if ( problem.status !== "IN_PROGRESS") {
     socket.emit("errorMessage", "This chat is not available");
     return;
 }

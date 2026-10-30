@@ -9,7 +9,7 @@ if(!token){
     });
 }
 const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  req.userId = decoded.userId;
+  req.user = {id : decoded.userId};
         next();
 }
 catch(err){
@@ -19,3 +19,4 @@ catch(err){
     });
 }
 };
+module.exports = authMiddleware;

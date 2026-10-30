@@ -9,11 +9,13 @@ app.use(express.json());
 app.use(cors());
 const http = require('http');
 const server = http.createServer(app);
+const authRoutes = require("./routes/authRoutes.js");
+
 const startServer = async () => {
   await connectDB();
 const io = initializeSocket(server);
+app.set("io",io);
   const PORT = process.env.PORT;
-const authRoutes = require("./routes/authRoutes.js");
 app.use('/',authRoutes);
   server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -23,6 +25,12 @@ const problemRoutes = require("./routes/problemRoutes.js");
 const requestRoutes = require("./routes/requestRoutes.js");
 const workspaceRoutes = require('./routes/workspaceRoutes.js');
 const chatRoutes = require("./routes/chatRoutes.js");
+console.log("authMiddleware:", typeof authMiddleware);
+console.log("problemRoutes:", typeof problemRoutes);
+console.log("requestRoutes:", typeof requestRoutes);
+console.log("workspaceRoutes:", typeof workspaceRoutes);
+console.log("chatRoutes:", typeof chatRoutes);
+console.log("authRoutes:", typeof authRoutes);
 app.use('/problems',authMiddleware,problemRoutes);
 app.use("/requests",authMiddleware, requestRoutes);
 app.use('/workspace', authMiddleware, workspaceRoutes);
