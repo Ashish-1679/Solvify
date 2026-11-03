@@ -25,12 +25,7 @@ const problemRoutes = require("./routes/problemRoutes.js");
 const requestRoutes = require("./routes/requestRoutes.js");
 const workspaceRoutes = require('./routes/workspaceRoutes.js');
 const chatRoutes = require("./routes/chatRoutes.js");
-console.log("authMiddleware:", typeof authMiddleware);
-console.log("problemRoutes:", typeof problemRoutes);
-console.log("requestRoutes:", typeof requestRoutes);
-console.log("workspaceRoutes:", typeof workspaceRoutes);
-console.log("chatRoutes:", typeof chatRoutes);
-console.log("authRoutes:", typeof authRoutes);
+
 app.use('/problems',authMiddleware,problemRoutes);
 app.use("/requests",authMiddleware, requestRoutes);
 app.use('/workspace', authMiddleware, workspaceRoutes);
